@@ -10,6 +10,8 @@ namespace Day1
         static void Main()
         {
             string inputFile = "input.txt";
+            int requiredSum = 2020;
+
             List<int> entries = File.ReadAllLines(inputFile)
                 .Select(x => Int32.Parse(x))
                 .ToList();
@@ -18,10 +20,19 @@ namespace Day1
             {
                 for (int j = i + 1; j < entries.Count; j++)
                 {
-                    if (entries[i] + entries[j] == 2020)
+                    // finding 2 numbers that sum up to 2020
+                    if (entries[i] + entries[j] == requiredSum)
                     {
-                        Console.WriteLine(entries[i] * entries[j]);
-                        return;
+                        Console.WriteLine($"Two numbers result: {entries[i] * entries[j]}");
+                    }
+
+                    for (int k = j + 1; k < entries.Count; k++)
+                    {
+                        // finding 3 numbers that sum up to 2020
+                        if (entries[i] + entries[j] + entries[k] == requiredSum)
+                        {
+                            Console.WriteLine($"Three numbers result: {entries[i] * entries[j] * entries[k]}");
+                        }
                     }
                 }
             }
