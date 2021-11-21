@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,10 +10,9 @@ namespace Day1
     {
         static void Main()
         {
-            string inputFile = "input.txt";
             int requiredSum = 2020;
 
-            List<int> entries = File.ReadAllLines(inputFile)
+            List<int> entries = File.ReadAllLines(Constants.FILE_NAME)
                 .Select(x => Int32.Parse(x))
                 .ToList();
 
