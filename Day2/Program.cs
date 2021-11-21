@@ -10,6 +10,7 @@ namespace Day2
         static void Main()
         {
             int validPasswordsCount = 0;
+            int validPasswordCountPositionRule = 0;
             foreach (string line in File.ReadLines(Constants.FILE_NAME))
             {
                 var pp = new PasswordPolicy(line);
@@ -17,8 +18,14 @@ namespace Day2
                 {
                     validPasswordsCount++;
                 }
+
+                if (pp.IsValidPositionRule())
+                {
+                    validPasswordCountPositionRule++;
+                }
             }
             Console.WriteLine($"Number of valid passwords: {validPasswordsCount}");
+            Console.WriteLine($"Number of valid passwords (position rule): {validPasswordCountPositionRule}");
         }
     }
 
@@ -54,6 +61,14 @@ namespace Day2
             // password is valid if it contains between MinCount and MaxCount appearances of Symbol
             int symbolCount = Password.Count(c => c == Symbol);
             return MinCount <= symbolCount && symbolCount <= MaxCount;
+        }
+
+        public bool IsValidPositionRule()
+        {
+            // password is valid if exactly one of indices MinCount and MaxCount contains Symbol
+            bool firstIndexContainsCorrectSymbol = Password[MinCount - 1] == Symbol;
+            bool secondIndexContainsCorrectSymbol = Password[MaxCount - 1] == Symbol;
+            return firstIndexContainsCorrectSymbol ^ secondIndexContainsCorrectSymbol;
         }
     }
 }
