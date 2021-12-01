@@ -10,32 +10,36 @@ namespace Day1
     {
         static void Main()
         {
-            int requiredSum = 2020;
-
-            List<int> entries = File.ReadAllLines(Constants.FILE_NAME)
+            List<int> measurements = File.ReadAllLines(Constants.FILE_NAME)
                 .Select(x => Int32.Parse(x))
                 .ToList();
 
-            for (int i = 0; i < entries.Count; i++)
-            {
-                for (int j = i + 1; j < entries.Count; j++)
-                {
-                    // finding 2 numbers that sum up to 2020
-                    if (entries[i] + entries[j] == requiredSum)
-                    {
-                        Console.WriteLine($"Two numbers result: {entries[i] * entries[j]}");
-                    }
+            Console.WriteLine($"Increased measurements: {CountIncreases(measurements, 1)}");
+            Console.WriteLine($"Increased measurements with sliding window of size 3: {CountIncreases(measurements, 3)}");
+        }
 
-                    for (int k = j + 1; k < entries.Count; k++)
-                    {
-                        // finding 3 numbers that sum up to 2020
-                        if (entries[i] + entries[j] + entries[k] == requiredSum)
-                        {
-                            Console.WriteLine($"Three numbers result: {entries[i] * entries[j] * entries[k]}");
-                        }
-                    }
+        static int CountIncreases(List<int> measurements, int slidingWindowSize)
+        {
+            int previousSlidingWindowSum = -1;
+            int increases = 0;
+
+            for (int i = 0; i < measurements.Count - slidingWindowSize + 1; i++)
+            {
+                int slidingWindowSum = 0;
+                for (int j = 0; j < slidingWindowSize; j++)
+                {
+                    slidingWindowSum += measurements[i + j];
                 }
+
+                if (i > 0 && slidingWindowSum > previousSlidingWindowSum)
+                {
+                    increases++;
+                }
+
+                previousSlidingWindowSum = slidingWindowSum;
             }
+            
+            return increases;
         }
     }
 }
