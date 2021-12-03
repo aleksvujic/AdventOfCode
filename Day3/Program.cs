@@ -1,6 +1,5 @@
 ﻿using Common;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -30,11 +29,7 @@ namespace Day3
 
             for (int i = 0; i < numbers[0].Length; i++)
             {
-                char[] binaryNumber = new char[numbers.Length];
-                for (int j = 0; j < numbers.Length; j++)
-                {
-                    binaryNumber[j] = numbers[j][i];
-                }
+                char[] binaryNumber = GetBinaryNumberForColumn(numbers, i);
 
                 var counts = binaryNumber
                     .GroupBy(x => x)
@@ -56,16 +51,14 @@ namespace Day3
 
         static int FilterValues(char[][] numbers, Criteria criteria)
         {
-            List<char[]> filteredValues = numbers.ToList();
+            char[][] filteredValues = numbers
+                .Select(x => x.ToArray())
+                .ToArray();
 
             int currentPos = 0;
-            while (filteredValues.Count > 1)
+            while (filteredValues.Length > 1)
             {
-                char[] binaryNumber = new char[filteredValues.Count];
-                for (int j = 0; j < filteredValues.Count; j++)
-                {
-                    binaryNumber[j] = filteredValues[j][currentPos];
-                }
+                char[] binaryNumber = GetBinaryNumberForColumn(filteredValues, currentPos);
 
                 var groupedBinaryNumber = binaryNumber
                     .GroupBy(x => x);
@@ -87,12 +80,22 @@ namespace Day3
 
                 filteredValues = filteredValues
                     .Where(x => x[currentPos] == selectedCharCriteria)
-                    .ToList();
+                    .ToArray();
 
                 currentPos++;
             }
 
             return Convert.ToInt32(new string(filteredValues[0]), 2);
+        }
+
+        static char[] GetBinaryNumberForColumn(char[][] numbers, int colIndex)
+        {
+            char[] binaryNumber = new char[numbers.Length];
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                binaryNumber[j] = numbers[j][colIndex];
+            }
+            return binaryNumber;
         }
 
         enum Criteria
