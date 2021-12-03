@@ -11,6 +11,7 @@ namespace Day3
         {
             string[] fileLines = File.ReadAllLines(Constants.FILE_NAME);
 
+            // represent bits as 2D array of characters
             char[][] numbers = new char[fileLines.Length][];
             for (int i = 0; i < fileLines.Length; i++)
             {
@@ -31,6 +32,7 @@ namespace Day3
             {
                 char[] binaryNumber = GetBinaryNumberForColumn(numbers, i);
 
+                // extract most and least common bits
                 var counts = binaryNumber
                     .GroupBy(x => x)
                     .OrderBy(x => x.Count())
@@ -41,6 +43,7 @@ namespace Day3
                 leastCommonBits += counts.First();
             }
 
+            // convert both binary strings to integer
             return Convert.ToInt32(mostCommonBits, 2) * Convert.ToInt32(leastCommonBits, 2);
         }
 
@@ -55,14 +58,17 @@ namespace Day3
                 .Select(x => x.ToArray())
                 .ToArray();
 
-            int currentPos = 0;
+            int currentColumnIndex = 0;
             while (filteredValues.Length > 1)
             {
-                char[] binaryNumber = GetBinaryNumberForColumn(filteredValues, currentPos);
+                char[] binaryNumber = GetBinaryNumberForColumn(filteredValues, currentColumnIndex);
 
+                // count occurences of each bit
                 var groupedBinaryNumber = binaryNumber
                     .GroupBy(x => x);
 
+
+                // decide which character to use based on criteria
                 var selectedCharCriteria = criteria switch
                 {
                     Criteria.MostCommon => groupedBinaryNumber
@@ -78,11 +84,12 @@ namespace Day3
                     _ => throw new Exception("Criteria not recognized"),
                 };
 
+                // remove values that don't have selected char at current column index
                 filteredValues = filteredValues
-                    .Where(x => x[currentPos] == selectedCharCriteria)
+                    .Where(x => x[currentColumnIndex] == selectedCharCriteria)
                     .ToArray();
 
-                currentPos++;
+                currentColumnIndex++;
             }
 
             return Convert.ToInt32(new string(filteredValues[0]), 2);
@@ -90,6 +97,7 @@ namespace Day3
 
         static char[] GetBinaryNumberForColumn(char[][] numbers, int colIndex)
         {
+            // get all chars in one column from 2D array
             char[] binaryNumber = new char[numbers.Length];
             for (int j = 0; j < numbers.Length; j++)
             {

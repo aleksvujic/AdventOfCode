@@ -25,12 +25,14 @@ namespace Day1
 
             for (int i = 0; i < measurements.Count - slidingWindowSize + 1; i++)
             {
+                // calculate sum of all elements in siding window
                 int slidingWindowSum = 0;
                 for (int j = 0; j < slidingWindowSize; j++)
                 {
                     slidingWindowSum += measurements[i + j];
                 }
 
+                // skip first measurement, comparison is not defined
                 if (i > 0 && slidingWindowSum > previousSlidingWindowSum)
                 {
                     increases++;

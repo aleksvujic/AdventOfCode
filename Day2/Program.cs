@@ -13,8 +13,13 @@ namespace Day2
             List<Move> moves = File.ReadAllLines(Constants.FILE_NAME)
                 .Select(x =>
                 {
+                    // format of line is (example): "forward 5" 
                     string[] parts = x.Split(' ');
+
+                    // convert direction to enum
                     _ = Enum.TryParse(CapitalizeFirstLetter(parts[0]), out Direction direction);
+                    
+                    // create new struct, parse number to int
                     return new Move(direction, Int32.Parse(parts[1]));
                 })
                 .ToList();
@@ -79,6 +84,7 @@ namespace Day2
 
         private static string CapitalizeFirstLetter(string input)
         {
+            // convert input so that its first letter is capitalized (ex. house => House)
             return input switch
             {
                 null => throw new ArgumentNullException(nameof(input)),
