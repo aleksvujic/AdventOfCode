@@ -17,7 +17,7 @@ namespace Day5
                 {
                     int[] numbers = x
                         .Split(", ->".ToArray(), StringSplitOptions.RemoveEmptyEntries)
-                        .Select(Int32.Parse)
+                        .Select(int.Parse)
                         .ToArray();
                     
                     return new Tuple<Point, Point>(

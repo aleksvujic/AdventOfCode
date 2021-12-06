@@ -29,7 +29,7 @@ namespace Day4
                 {
                     drawnNumbers = line
                         .Split(',')
-                        .Select(x => Int32.Parse(x))
+                        .Select(x => int.Parse(x))
                         .ToArray();
                 }
                 else
@@ -45,7 +45,7 @@ namespace Day4
 
                     int[] rowNumbers = line
                         .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(x => Int32.Parse(x))
+                        .Select(x => int.Parse(x))
                         .ToArray();
 
                     bingoBoards[boardIndex].AddRow(rowNumbers);

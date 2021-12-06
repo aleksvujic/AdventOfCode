@@ -11,7 +11,7 @@ namespace Day1
         static void Main()
         {
             List<int> measurements = File.ReadAllLines(Constants.FILE_NAME)
-                .Select(x => Int32.Parse(x))
+                .Select(x => int.Parse(x))
                 .ToList();
 
             Console.WriteLine($"Increased measurements: {CountIncreases(measurements, 1)}");

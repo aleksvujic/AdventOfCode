@@ -20,7 +20,7 @@ namespace Day2
                     _ = Enum.TryParse(CapitalizeFirstLetter(parts[0]), out Direction direction);
                     
                     // create new struct, parse number to int
-                    return new Move(direction, Int32.Parse(parts[1]));
+                    return new Move(direction, int.Parse(parts[1]));
                 })
                 .ToList();
 
