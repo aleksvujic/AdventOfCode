@@ -39,9 +39,9 @@ namespace Day9
                 for (int j = 0; j < Mesh[i].Length; j++)
                 {
                     bool smallerThanTop = i == 0 || Mesh[i][j].Value < Mesh[i-1][j].Value;
-                    bool smallerThanRight = j == Mesh[i].Length - 1 || Mesh[i][j].Value < Mesh[i][j + 1].Value;
-                    bool smallerThanBottom = i == Mesh.Length - 1 || Mesh[i][j].Value < Mesh[i + 1][j].Value;
-                    bool smallerThanLeft = j == 0 || Mesh[i][j].Value < Mesh[i][j - 1].Value;
+                    bool smallerThanRight = j == Mesh[i].Length - 1 || Mesh[i][j].Value < Mesh[i][j+1].Value;
+                    bool smallerThanBottom = i == Mesh.Length - 1 || Mesh[i][j].Value < Mesh[i+1][j].Value;
+                    bool smallerThanLeft = j == 0 || Mesh[i][j].Value < Mesh[i][j-1].Value;
 
                     if (smallerThanTop && smallerThanRight && smallerThanBottom && smallerThanLeft)
                     {
