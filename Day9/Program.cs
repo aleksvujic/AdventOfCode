@@ -7,7 +7,7 @@ namespace Day9
         static void Main()
         {
             // parse input into grid
-            Grid grid = new Grid(File.ReadAllLines(Constants.FILE_NAME));
+            var grid = new Grid(File.ReadAllLines(Constants.FILE_NAME));
 
             grid.MarkLowestPoints();
 
