@@ -13,7 +13,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in C#
 |  7  |  ⭐⭐  |
 |  8  |  ⭐⭐  |
 |  9  |  ⭐⭐  |
-|  10 |      |
+|  10 |  ⭐⭐  |
 |  11 |      |
 |  12 |      |
 |  13 |      |
