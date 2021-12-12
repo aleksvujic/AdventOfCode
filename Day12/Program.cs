@@ -75,12 +75,6 @@ namespace Day12
 
     public class UndirectedGraph
     {
-        // number of vertices
-        public int V { get; private set; }
-
-        // number of edges
-        public int E { get; private set; }
-
         // adjacency lists
         private readonly Dictionary<Node, List<Node>> _adj;
 
@@ -104,21 +98,16 @@ namespace Day12
             if (!_adj.ContainsKey(v))
             {
                 _adj.Add(v, new List<Node>());
-                V++;
             }
 
             if (!_adj.ContainsKey(w))
             {
                 _adj.Add(w, new List<Node>());
-                V++;
             }
 
             // add to adjacency lists
             _adj[v].Add(w);
             _adj[w].Add(v);
-
-            // increment edge count
-            E++;
         }
 
         public List<Node> GetAdjacency(Node v)
