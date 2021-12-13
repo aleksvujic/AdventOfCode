@@ -18,7 +18,7 @@ namespace Day13
             // get all fold instructions
             Fold[] folds = lines
                 .Where(x => x.Contains('='))
-                .Select(x => x.Replace("fold along ", ""))
+                .Select(x => x.Replace("fold along ", string.Empty))
                 .Select(x => x.Split('='))
                 .Select(x =>
                 {
