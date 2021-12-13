@@ -23,7 +23,7 @@ namespace Day13
                 .Select(x =>
                 {
                     _ = Enum.TryParse(x[0].ToUpper(), out FoldDirection foldDirection);
-                    return new Fold(foldDirection, int.Parse(x[1]));
+                    return new Fold(foldDirection);
                 })
                 .ToArray();
 
@@ -199,5 +199,5 @@ namespace Day13
     }
 
     record Pos(int X, int Y);
-    record Fold(FoldDirection FoldDirection, int FoldAt);
+    record Fold(FoldDirection FoldDirection);
 }
