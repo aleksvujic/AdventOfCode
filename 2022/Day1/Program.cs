@@ -3,7 +3,6 @@
 var elvesCalories = File.ReadAllLines(Constants.FILE_NAME)
     .ToList();
 
-
 var elvesCalorieSums = new List<int>();
 var currentElfCalorieSum = 0;
 foreach (var calories in elvesCalories)
