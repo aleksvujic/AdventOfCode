@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in C#
 ## Progress
 | Day | 2021 | 2022 |
 |:---:|:----:|:----:|
-|  1  |  ⭐⭐  |      |
+|  1  |  ⭐⭐  |  ⭐⭐  |
 |  2  |  ⭐⭐  |      |
 |  3  |  ⭐⭐  |      |
 |  4  |  ⭐⭐  |      |
