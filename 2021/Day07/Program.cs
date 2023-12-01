@@ -1,9 +1,6 @@
 ﻿using Common;
-using System;
-using System.IO;
-using System.Linq;
 
-namespace Day7
+namespace Day07
 {
     internal class Program
     {

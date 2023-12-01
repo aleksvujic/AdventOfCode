@@ -1,10 +1,6 @@
 ﻿using Common;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
-namespace Day6
+namespace Day06
 {
     internal class Program
     {
