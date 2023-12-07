@@ -9,11 +9,12 @@ Console.WriteLine($"Part 1 result: {Part1(hands)}");
 
 long Part1(Hand[] hands)
 {
-    var orders = hands
+    return hands
         .GroupBy(x => x.HandType)
-        .OrderByDescending(x => x.Key);
-    
-    return 1;
+        .OrderBy(x => x.Key)
+        .SelectMany(x => x.OrderBy(y => y, new HandComparer()))
+        .Select((x, idx) => (idx + 1) * x.Bid)
+        .Sum();
 }
 
 record Hand(int[] Cards, int Bid)
@@ -55,7 +56,6 @@ record Hand(int[] Cards, int Bid)
 
             var groups = Cards
                 .GroupBy(x => x)
-                .OrderByDescending(x => x)
                 .ToDictionary(x => x.Key, x => x.Count());
 
             // Five of a kind, where all five cards have the same label: AAAAA
@@ -82,5 +82,25 @@ record Hand(int[] Cards, int Bid)
             else
                 return -1;
         }
+    }
+}
+
+class HandComparer : IComparer<Hand>
+{
+    public int Compare(Hand? x, Hand? y)
+    {
+        for (int i = 0; i < x.Cards.Length; i++)
+        {
+            if (x.Cards[i] > y.Cards[i])
+            {
+                return 1;
+            }
+            else if (x.Cards[i] < y.Cards[i])
+            {
+                return -1;
+            }
+        }
+
+        return 0;
     }
 }
