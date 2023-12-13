@@ -1,125 +1,163 @@
 ﻿using Common;
 
-Console.WriteLine($"Part 1 result: {Solve(part2: false)}");
-Console.WriteLine($"Part 1 result: {Solve(part2: true)}");
-
-long Solve(bool part2)
+namespace Day04
 {
-    var springs = ParseInput(part2: part2);
-
-    long res = 0;
-
-    foreach (var spring in springs)
+    internal class Program
     {
-        res += spring.GetNumValidConditions();
-    }
-
-    return res;
-}
-
-SpringsStatePair[] ParseInput(bool part2)
-{
-    return File.ReadAllLines(Constants.FILE_NAME)
-        .Select(x =>
+        static void Main()
         {
-            var split = x.Split();
-            var conditions = split.First();
-            var desiredState = split.Last();
+            Console.WriteLine($"Part 1 result: {Solve(part2: false)}");
+            Console.WriteLine($"Part 1 result: {Solve(part2: true)}");
+        }
 
-            if (part2)
+        static long Solve(bool part2)
+        {
+            var springs = ParseInput(part2: part2);
+
+            long res = 0;
+
+            foreach (var spring in springs)
             {
-                conditions = string.Join('?', Enumerable.Repeat($"{conditions}", 5));
-                desiredState = string.Join(',', Enumerable.Repeat($"{desiredState}", 5));
+                res += spring.GetNumValidConditions();
             }
 
-            return new SpringsStatePair(conditions, desiredState);
-        })
-        .ToArray();
-}
-
-record SpringsStatePair(string Springs, string DesiredState)
-{
-    public long GetNumValidConditions()
-    {
-        return GetNumValidConditions(Springs, DesiredState);
-    }
-
-    private long GetNumValidConditions(string springs, string groups)
-    {
-        if (GetNumGroups(groups) == 0)
-        {
-            return springs.Contains('#') ? 0 : 1;
-        }
-        else if (string.IsNullOrEmpty(springs) || GetFirstGroup(groups) > springs.Length)
-        {
-            return 0;
+            return res;
         }
 
-        var firstChar = springs.First();
-        switch (firstChar)
+        static SpringsStatePair[] ParseInput(bool part2)
         {
-            case '.':
-                return GetNumValidConditions(springs[1 ..], groups);
-            case '?':
-                return
-                    GetNumValidConditions(ReplaceAt(springs, 0, '.'), groups) +
-                    GetNumValidConditions(ReplaceAt(springs, 0, '#'), groups);
-            case '#':
-                var groupLen = GetFirstGroup(groups);
-                var group = springs[..groupLen];
-                if (group.All(x => x != '.'))
+            return File.ReadAllLines(Constants.FILE_NAME)
+                .Select(x =>
                 {
-                    if (springs.Length == groupLen)
+                    var split = x.Split();
+                    var conditions = split.First();
+                    var desiredState = split.Last();
+
+                    if (part2)
                     {
-                        return GetNumGroups(groups) == 1 ? 1 : 0;
+                        conditions = string.Join('?', Enumerable.Repeat($"{conditions}", 5));
+                        desiredState = string.Join(',', Enumerable.Repeat($"{desiredState}", 5));
                     }
 
-                    if (springs[groupLen] != '#')
-                    {
-                        return GetNumValidConditions($".{springs[(groupLen + 1)..]}", RemoveFirstGroup(groups));
-                    }
-                }
+                    return new SpringsStatePair(conditions, desiredState);
+                })
+                .ToArray();
+        }
+    }
 
+    record SpringsStatePair(string Springs, string DesiredState)
+    {
+        private static readonly Dictionary<(string, string), long> Cache = [];
+
+        static void AddToCache(string springs, string groups, long res)
+        {
+            Cache[(springs, groups)] = res;
+        }
+
+        public long GetNumValidConditions()
+        {
+            return GetNumValidConditions(Springs, DesiredState);
+        }
+
+        private long GetNumValidConditions(string springs, string groups)
+        {
+            if (Cache.ContainsKey((springs, groups)))
+            {
+                return Cache[(springs, groups)];
+            }
+
+            if (GetNumGroups(groups) == 0)
+            {
+                var res1 = springs.Contains('#') ? 0 : 1;
+                AddToCache(springs, groups, res1);
+                return res1;
+            }
+            else if (string.IsNullOrEmpty(springs) || GetFirstGroup(groups) > springs.Length)
+            {
+                var res2 = 0;
+                AddToCache(springs, groups, res2);
+                return res2;
+            }
+
+            var firstChar = springs.First();
+            switch (firstChar)
+            {
+                case '.':
+                    var res3 = GetNumValidConditions(springs[1..], groups);
+                    AddToCache(springs, groups, res3);
+                    return res3;
+                case '?':
+                    var res4 =
+                        GetNumValidConditions(ReplaceAt(springs, 0, '.'), groups) +
+                        GetNumValidConditions(ReplaceAt(springs, 0, '#'), groups);
+                    AddToCache(springs, groups, res4);
+                    return res4;
+
+                case '#':
+                    var groupLen = GetFirstGroup(groups);
+                    var group = springs[..groupLen];
+                    if (group.All(x => x != '.'))
+                    {
+                        if (springs.Length == groupLen)
+                        {
+                            var res5 = GetNumGroups(groups) == 1 ? 1 : 0;
+                            AddToCache(springs, groups, res5);
+                            return res5;
+                        }
+
+                        if (springs[groupLen] != '#')
+                        {
+                            var res6 = GetNumValidConditions($".{springs[(groupLen + 1)..]}", RemoveFirstGroup(groups));
+                            AddToCache(springs, groups, res6);
+                            return res6;
+                        }
+                    }
+
+                    var res7 = 0;
+                    AddToCache(springs, groups, res7);
+                    return res7;
+            }
+
+            var res8 = 0;
+            AddToCache(springs, groups, res8);
+            return res8;
+        }
+
+        private int GetNumGroups(string groups)
+        {
+            if (string.IsNullOrEmpty(groups))
+            {
                 return 0;
-        }
-        
-        return 0;
-    }
+            }
 
-    private int GetNumGroups(string groups)
-    {
-        if (string.IsNullOrEmpty(groups))
+            return groups.Split(",").Count();
+        }
+
+        private string RemoveFirstGroup(string groups)
         {
-            return 0;
+            if (string.IsNullOrEmpty(groups))
+            {
+                throw new Exception();
+            }
+
+            return string.Join(',', groups.Split(",").Skip(1));
         }
 
-        return groups.Split(",").Count();
-    }
-
-    private string RemoveFirstGroup(string groups)
-    {
-        if (string.IsNullOrEmpty(groups))
+        int GetFirstGroup(string groups)
         {
-            throw new Exception();
+            if (string.IsNullOrEmpty(groups))
+            {
+                throw new Exception();
+            }
+
+            return int.Parse(groups.Split(",").First());
         }
 
-        return string.Join(',', groups.Split(",").Skip(1));
-    }
-
-    int GetFirstGroup(string groups)
-    {
-        if (string.IsNullOrEmpty(groups))
+        private string ReplaceAt(string input, int index, char newChar)
         {
-            throw new Exception();
+            char[] chars = input.ToCharArray();
+            chars[index] = newChar;
+            return new string(chars);
         }
-
-        return int.Parse(groups.Split(",").First());
-    }
-
-    private string ReplaceAt(string input, int index, char newChar)
-    {
-        char[] chars = input.ToCharArray();
-        chars[index] = newChar;
-        return new string(chars);
-    }
-};
+    };
+}
