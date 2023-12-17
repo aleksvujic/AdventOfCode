@@ -1,20 +1,54 @@
 ﻿using Common;
+using System.Text.RegularExpressions;
 
 Console.WriteLine($"Part 1 result: {Part1()}");
 
 long Part1()
 {
     var platform = ParseInput();
-    VisualizePlatform(platform);
 
     var tilted = TiltPlatform(platform, ETiltDirection.North);
 
-    return 0;
+    return GetLoad(tilted);
 }
 
 char[][] TiltPlatform(char[][] platform, ETiltDirection tiltDirection)
 {
-    return null;
+    for (int colIdx = 0; colIdx < platform[0].Length; colIdx++)
+    {
+        // get column
+        var column = Enumerable.Range(0, platform.Length)
+            .Select(rowIdx => platform[rowIdx][colIdx])
+            .ToArray();
+
+        // slide rocks
+        var columnChars = string.Join(string.Empty, column);
+        var newColumn = Regex.Replace(columnChars, @"[^#]+", x =>
+        {
+            var rocks = string.Concat(Enumerable.Repeat('O', x.Value.Count(y => y == 'O')));
+            var empty = string.Concat(Enumerable.Repeat('.', x.Value.Count(y => y == '.')));
+            return $"{rocks}{empty}";
+        });
+
+        // replace column
+        Enumerable.Range(0, platform.Length)
+            .ToList()
+            .ForEach(rowIdx => platform[rowIdx][colIdx] = newColumn[rowIdx]);
+    }
+    
+    return platform;
+}
+
+long GetLoad(char[][] platform)
+{
+    long res = 0;
+
+    for (int i = 0; i < platform.Length; i++)
+    {
+        res += platform[i].Count(x => x == 'O') * (platform.Length - 1 - i);
+    }
+    
+    return res;
 }
 
 char[][] ParseInput()
@@ -45,6 +79,7 @@ void VisualizePlatform(char[][] platform)
     {
         Console.WriteLine(row);
     }
+    Console.WriteLine();
 }
 
 enum ETiltDirection
