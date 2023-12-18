@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 
 Console.WriteLine($"Part 1 result: {Part1()}");
+Console.WriteLine($"Part 2 result: {Part2()}");
 
 long Part1()
 {
@@ -12,28 +13,91 @@ long Part1()
     return GetLoad(tilted);
 }
 
+long Part2()
+{
+    var platform = ParseInput();
+
+    var history = new List<string>();
+    for (int i = 1_000_000_000; i > 0; i--)
+    {
+        platform = TiltPlatform(platform, ETiltDirection.North);
+        platform = TiltPlatform(platform, ETiltDirection.West);
+        platform = TiltPlatform(platform, ETiltDirection.South);
+        platform = TiltPlatform(platform, ETiltDirection.East);
+
+        var stringRepr = GetPlatformStringRepresentation(platform);
+        var idx = history.IndexOf(stringRepr);
+
+        if (idx < 0)
+        {
+            history.Add(stringRepr);
+        }
+        else
+        {
+            var loopLen = history.Count - idx;
+            var rem = (i - 1) % loopLen;
+            platform = GetPlatformFromStringRepresentation(history[idx + rem]);
+            break;
+        }
+    }
+
+    return GetLoad(platform);
+}
+
 char[][] TiltPlatform(char[][] platform, ETiltDirection tiltDirection)
 {
-    for (int colIdx = 0; colIdx < platform[0].Length; colIdx++)
+    string SlideRocks(char[] data, ETiltDirection tiltDirection)
     {
-        // get column
-        var column = Enumerable.Range(0, platform.Length)
-            .Select(rowIdx => platform[rowIdx][colIdx])
-            .ToArray();
-
-        // slide rocks
-        var columnChars = string.Join(string.Empty, column);
-        var newColumn = Regex.Replace(columnChars, @"[^#]+", x =>
+        var chars = string.Join(string.Empty, data);
+        return Regex.Replace(chars, @"[^#]+", x =>
         {
             var rocks = string.Concat(Enumerable.Repeat('O', x.Value.Count(y => y == 'O')));
             var empty = string.Concat(Enumerable.Repeat('.', x.Value.Count(y => y == '.')));
-            return $"{rocks}{empty}";
-        });
+            
+            if (tiltDirection == ETiltDirection.North || tiltDirection == ETiltDirection.West)
+            {
+                return $"{rocks}{empty}";
+            }
+            else if (tiltDirection == ETiltDirection.East || tiltDirection == ETiltDirection.South)
+            {
+                return $"{empty}{rocks}";
+            }
 
-        // replace column
-        Enumerable.Range(0, platform.Length)
-            .ToList()
-            .ForEach(rowIdx => platform[rowIdx][colIdx] = newColumn[rowIdx]);
+            throw new Exception($"Tilt direction {tiltDirection} doesn't exist");
+        });
+    }
+
+    if (tiltDirection == ETiltDirection.North || tiltDirection == ETiltDirection.South)
+    {
+        for (int colIdx = 0; colIdx < platform[0].Length; colIdx++)
+        {
+            // get column
+            var column = Enumerable.Range(0, platform.Length)
+                .Select(rowIdx => platform[rowIdx][colIdx])
+                .ToArray();
+
+            // slide rocks
+            var slidedRocks = SlideRocks(column, tiltDirection);
+
+            // replace column
+            Enumerable.Range(0, platform.Length)
+                .ToList()
+                .ForEach(rowIdx => platform[rowIdx][colIdx] = slidedRocks[rowIdx]);
+        }
+    }
+    else if (tiltDirection == ETiltDirection.West || tiltDirection == ETiltDirection.East)
+    {
+        for (int rowIdx = 0; rowIdx < platform.Length; rowIdx++)
+        {
+            // get row
+            var row = platform[rowIdx];
+
+            // slide rocks
+            var slidedRocks = SlideRocks(row, tiltDirection);
+
+            // replace row
+            platform[rowIdx] = slidedRocks.ToCharArray();
+        }
     }
     
     return platform;
@@ -73,16 +137,35 @@ char[][] ParseInput()
     return res;
 }
 
-void VisualizePlatform(char[][] platform)
+string GetPlatformStringRepresentation(char[][] platform)
 {
-    foreach (var row in platform)
+    var res = string.Empty;
+
+    for (int i = 0; i < platform.Length; i++)
     {
-        Console.WriteLine(row);
+        if (i > 0)
+        {
+            res += Environment.NewLine;
+        }
+
+        res += new string(platform[i]);
     }
-    Console.WriteLine();
+
+    return res;
+}
+
+char[][] GetPlatformFromStringRepresentation(string stringRepr)
+{
+    return stringRepr
+        .Split(Environment.NewLine)
+        .Select(x => x.ToCharArray())
+        .ToArray();
 }
 
 enum ETiltDirection
 {
-    North
+    North,
+    West,
+    South,
+    East
 }
